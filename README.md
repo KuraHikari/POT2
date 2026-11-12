@@ -9,11 +9,10 @@ Manual de usuario de la práctica de Programación (UD02) de 1.º DAM. El progra
 - [Obtener un ticket](#obtener-un-ticket)
 - [Anular una multa](#anular-una-multa)
 - [Tarifas y horarios](#tarifas-y-horarios)
-- [Estado de la práctica](#estado-de-la-práctica)
 
 ## Abrir el programa en Windows
 
-El archivo `.bat` para abrir el programa con doble clic está pendiente de incorporarse al repositorio. Mientras tanto, puedes probar la versión publicada sin IntelliJ con el **JDK 25** instalado y disponible en la terminal de Windows.
+Para abrir el parquímetro necesitas tener **Java 25 (JDK 25)** instalado.
 
 1. En GitHub, pulsa el botón verde **Code** y elige **Download ZIP**.
 2. Abre **Descargas**, haz clic derecho sobre el ZIP y selecciona **Extraer todo**.
@@ -25,14 +24,12 @@ El archivo `.bat` para abrir el programa con doble clic está pendiente de incor
 
 Escribe el número de la opción y pulsa **Intro**.
 
-| Opción | Qué puedes hacer en la versión publicada |
+| Opción | Qué puedes hacer |
 | --- | --- |
 | `1` | Comprar un ticket y ver la hora hasta la que puedes aparcar. |
 | `2` | Abrir el menú de multas y simular el pago de 3,00 € por exceder el tiempo. |
-| `3` | Consulta de fecha, tarifas y horarios. Pendiente de implementar en el programa. |
-| `4` | Menú de administrador. Pendiente de implementar. |
 
-Para salir, escribe `5` en el menú principal. En esta versión, el número aún no aparece en el menú y se muestra «Opción no válida» justo antes de cerrar el programa.
+Para salir, escribe `5` en el menú principal.
 
 ## Obtener un ticket
 
@@ -52,8 +49,7 @@ El ticket vence el jueves 12 de noviembre a las **17:05**. De los 15 minutos com
 
 En el menú principal, elige **2. Anular una multa**.
 
-- **1. Exceder el tiempo permitido (3,00 €).** Introduce el número completo del ticket que figura en pantalla y escribe `3.00` para simular el pago. Si el importe es inferior, el programa vuelve a pedirlo. En la versión publicada, el programa vuelve al submenú tras el pago y el justificante aún está en desarrollo.
-- **2. Carecer de ticket (6,00 €).** La opción figura en el submenú y su funcionamiento está pendiente de publicar.
+- **1. Exceder el tiempo permitido (3,00 €).** Introduce el número completo del ticket que figura en pantalla y escribe `3.00` para simular el pago. Si el importe es inferior, el programa vuelve a pedirlo. Después del pago, volverás al submenú.
 - **3. Volver al menú principal.**
 
 ## Tarifas y horarios
@@ -73,7 +69,3 @@ En el menú principal, elige **2. Anular una multa**.
 | Domingos | Cerrado |
 
 El tiempo comprado se consume durante los tramos de apertura.
-
-## Estado de la práctica
-
-El código fuente se encuentra en [`src/Main.java`](src/Main.java). La copia de trabajo incorpora los justificantes para los dos tipos de multa y la simulación de la fecha de anulación. Esos cambios están pendientes de compilar y publicar.
