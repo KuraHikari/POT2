@@ -24,9 +24,7 @@ Para abrir el parquímetro necesitas tener **Java 25 (JDK 25)** instalado.
 
 1. En GitHub, pulsa el botón verde **Code** y elige **Download ZIP**.
 2. Abre **Descargas**, haz clic derecho sobre el ZIP y selecciona **Extraer todo**.
-3. Abre la carpeta extraída donde están este README y la carpeta `src`.
-4. Haz clic en la barra de dirección del Explorador, escribe `cmd` y pulsa **Intro**.
-5. En la ventana que se abre, escribe `java src/Main.java` y pulsa **Intro**. Aparecerá el menú del parquímetro.
+3. Abre la carpeta extraída y haz doble clic en **POT2.bat**. Se abrirá el menú del parquímetro.
 
 ## Ejecutar en macOS o Linux
 
@@ -36,7 +34,7 @@ Descarga y extrae el ZIP del repositorio, abre una terminal en la carpeta que co
 java src/Main.java
 ```
 
-El mismo comando se usa en Windows. Java compila y ejecuta el fuente directamente; no necesitas abrir un IDE ni usar el archivo `.class` incluido en `out`.
+Java ejecuta el código fuente directamente, sin necesidad de IntelliJ.
 
 ## Menú principal
 
