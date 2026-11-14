@@ -52,6 +52,8 @@ Escribe el número de la opción y pulsa **Intro**.
 
 Para apagar el parquímetro, accede al menú de administrador y elige la opción `3`.
 
+Cuando una pregunta ofrece `V`, puedes escribirla para volver directamente al menú principal. Si estás comprando un ticket o anulando una multa, esto cancela la operación antes de generar el ticket o justificante.
+
 ## Obtener un ticket
 
 1. Selecciona **1. Obtener un ticket**.
@@ -59,7 +61,7 @@ Para apagar el parquímetro, accede al menú de administrador y elige la opción
 3. Para usar la fecha y hora actuales, responde `N` a la pregunta sobre la simulación. Para probar otro momento, responde `S` y escribe la fecha como `AAAA-MM-DDTHH:MM`, con una `T` entre la fecha y la hora.
 4. Introduce el importe con un **punto** para los decimales, por ejemplo `0.25`. El mínimo es de **0,10 €** para residentes y de **0,25 €** para no residentes. La máquina no devuelve cambio.
    Si pagas menos del mínimo, no se emite un ticket y vuelves al menú principal.
-5. Lee el ticket en pantalla. Verás su número, la fecha y hora de expedición, el fin del estacionamiento y el importe pagado.
+5. Lee el ticket en pantalla. Verás su número, la fecha y hora de expedición, el fin del estacionamiento y el importe pagado. Pulsa **Intro** para volver al menú principal.
 
 El número de ticket utiliza el formato `M<AAAA-DD-MM>H<HH:MM>I<céntimos>C<contador>`: la fecha del número va en orden año-día-mes, a diferencia de la fecha de simulación. El contador empieza en `1` cada vez que abres el programa y aumenta por cada ticket emitido.
 
@@ -74,14 +76,16 @@ El ticket vence el jueves 12 de noviembre a las **17:05**. De los 15 minutos com
 En el menú principal, elige **2. Anular una multa**.
 
 - **1. Exceder el tiempo permitido (3,00 €).** Introduce el número completo del ticket o escribe `V` para volver. Escribe `3.00` para simular el pago. Si el importe es inferior, el programa vuelve a pedirlo. Después del pago, elige la fecha actual o simulada y lee el justificante.
-- **2. Carecer de ticket (6,00 €).** Introduce el importe, elige la fecha actual o simulada y lee el justificante. En el paso del pago puedes escribir `V` para volver.
+- **2. Carecer de ticket (6,00 €).** Introduce el importe, elige la fecha actual o simulada y lee el justificante.
 - **3. Volver al menú principal.**
+
+Después de leer el justificante, pulsa **Intro** para volver al submenú de multas.
 
 La opción de 3,00 € comprueba el formato del número de ticket, su fecha y hora, un importe de al menos 10 céntimos y un contador positivo. No consulta un registro de tickets emitidos, no comprueba que haya vencido ni impide reutilizar el número. El pago se simula por teclado.
 
 ## Consultar fecha y hora, tarifas y horarios
 
-Desde el menú principal, elige **3**. Usa **1** para ver la fecha y hora actuales del equipo, **2** para ver las tarifas y **3** para ver los horarios. Pulsa **Intro** tras leer cada pantalla. La opción **4** vuelve al menú principal.
+Desde el menú principal, elige **3**. Usa **1** para ver la fecha y hora actuales del equipo, **2** para ver las tarifas y **3** para ver los horarios. Tras mostrar los datos, el programa vuelve al submenú de consultas. La opción **4** vuelve al menú principal.
 
 ## Tarifas y horarios
 
@@ -113,6 +117,8 @@ Elige **4** en el menú principal e introduce el usuario de prueba `admin` y la 
 | `2` | Consultar cuántas multas se han anulado y cuánto se ha recaudado por ellas. |
 | `3` | Apagar el parquímetro y terminar la ejecución. |
 | `4` | Volver al menú principal. |
+
+Después de consultar un informe, pulsa **Intro** para volver al submenú. Los datos del informe siguen visibles en la consola.
 
 ## Prueba completa
 
