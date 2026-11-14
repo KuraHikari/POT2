@@ -13,7 +13,7 @@ void main(String[] args) {
     int opcion, duracionSegundos, diaSemanaInicio, horaInicio, contadorTicket = 1, importeCentimos, opcionMulta, posicionH, posicionI, posicionC, posicionPrimerGuion, posicionSegundoGuion, anioTicket, mesTicket, diaTicket, centimosTicket, contadorAnulaciones = 1, opcionInformacion, opcionAdmin;
     int horasTicket, minutosTicket;
     double importe, importeMulta = 0, ingresosTicket = 0.0, ingresosMultas = 0.0;
-    boolean residente, simularFechaHora, importeSuficiente, fechaHoraValida, numeroTicketMultaValido, fechaTicketValida, horaTicketValida, importeTicketValido, contadorTicketTextoValido, parquimetroEncendido = true;
+    boolean volverAlMenu, residente, simularFechaHora, importeSuficiente, fechaHoraValida, numeroTicketMultaValido, fechaTicketValida, horaTicketValida, importeTicketValido, contadorTicketTextoValido, parquimetroEncendido = true;
     LocalDateTime fechaHoraInicio, fechaHoraFin, cierreZonaAzul, fechaHoraAnulacion, fechaHoraConsulta;
     long segundosRestantes;
     String nombreDiaInicio = "", nombreMesInicio = "", nombreDiaFin= "", nombreMesFin = "", horaInicioFormateada, horaFinFormateada, expedicion, vencimiento, numeroTicket, respuesta, fechaHoraTexto, numeroTicketMulta, fechaTicket, horaTicket, importeTicket, contadorTicketTexto, referenciaAnulacion, usuarioAdmin, contraseniaAdmin;
@@ -53,338 +53,357 @@ void main(String[] args) {
 
                 //Eres residente? (S/N)
                 do {
-                    respuesta = IO.readln("¿Eres residente? (S/N): ");
+                    respuesta = IO.readln("¿Eres residente? (S/N o V para volver al menú principal): ");
 
                     if (!respuesta.equalsIgnoreCase("S")
-                            && !respuesta.equalsIgnoreCase("N")) {
-                        IO.println("Introduce S o N.");
+                            && !respuesta.equalsIgnoreCase("N") && !respuesta.equalsIgnoreCase("V")) {
+                        IO.println("Introduce S, N o V.");
                     }
 
-                } while (!respuesta.equalsIgnoreCase("S") && !respuesta.equalsIgnoreCase("N"));
+                } while (!respuesta.equalsIgnoreCase("S") && !respuesta.equalsIgnoreCase("N") && !respuesta.equalsIgnoreCase("V"));
 
+                volverAlMenu = respuesta.equalsIgnoreCase("V");
                 residente = respuesta.equalsIgnoreCase("S");
 
-                //Preguntar si se quiere simular otra fecha y hora distinta a la actual
-                do {
-                    respuesta = IO.readln("¿Quieres simular una fecha y hora? (S/N): ");
-
-                    if (!respuesta.equalsIgnoreCase("S")&& !respuesta.equalsIgnoreCase("N")) {
-                        IO.println("Introduce S o N.");
-                    }
-
-                } while (!respuesta.equalsIgnoreCase("S") && !respuesta.equalsIgnoreCase("N"));
-
-                simularFechaHora = respuesta.equalsIgnoreCase("S");
-
-                if (simularFechaHora) {
-                    //Preguntar por la fecha y hora a simular y se guarda en fechaHoraInicio
+                if (!volverAlMenu) {
+                    //Preguntar si se quiere simular otra fecha y hora distinta a la actual
                     do {
-                        fechaHoraTexto = IO.readln(
-                                "Introduce fecha y hora (ejemplo: 2027-11-21T07:00): ");
+                        respuesta = IO.readln("¿Quieres simular una fecha y hora? (S/N o V para volver al menú principal): ");
 
-                        fechaHoraValida = false;
-
-                        if (fechaHoraTexto.length() == 16) {
-                            fechaHoraValida =
-                                    fechaHoraTexto.charAt(4) == '-'
-                                            && fechaHoraTexto.charAt(7) == '-'
-                                            && fechaHoraTexto.charAt(10) == 'T'
-                                            && fechaHoraTexto.charAt(13) == ':';
+                        if (!respuesta.equalsIgnoreCase("S")&& !respuesta.equalsIgnoreCase("N") && !respuesta.equalsIgnoreCase("V")) {
+                            IO.println("Introduce S, N o V.");
                         }
 
-                        if (!fechaHoraValida) {
-                            IO.println("Usa el formato año-mes-díaThora:minutos.");
+                    } while (!respuesta.equalsIgnoreCase("S") && !respuesta.equalsIgnoreCase("N") && !respuesta.equalsIgnoreCase("V"));
+
+                    volverAlMenu = respuesta.equalsIgnoreCase("V");
+                    simularFechaHora = respuesta.equalsIgnoreCase("S");
+
+                    if (!volverAlMenu) {
+                        fechaHoraInicio = LocalDateTime.now();//Se usa la fecha y hora actual
+                        if (simularFechaHora) {
+                            //Preguntar por la fecha y hora a simular y se guarda en fechaHoraInicio
+                            do {
+                                fechaHoraTexto = IO.readln(
+                                        "Introduce fecha y hora (ejemplo: 2027-11-21T07:00, o V para volver al menú principal): ");
+
+                                fechaHoraValida = false;
+
+                                if (fechaHoraTexto.length() == 16) {
+                                    fechaHoraValida =
+                                            fechaHoraTexto.charAt(4) == '-'
+                                                    && fechaHoraTexto.charAt(7) == '-'
+                                                    && fechaHoraTexto.charAt(10) == 'T'
+                                                    && fechaHoraTexto.charAt(13) == ':';
+                                }
+
+                                if (!fechaHoraValida && !fechaHoraTexto.equalsIgnoreCase("V")) {
+                                    IO.println("Usa el formato año-mes-díaThora:minutos.");
+                                }
+
+                            } while (!fechaHoraValida && !fechaHoraTexto.equalsIgnoreCase("V"));
+
+                            volverAlMenu = fechaHoraTexto.equalsIgnoreCase("V");
+                            if (!volverAlMenu) {
+                                fechaHoraInicio = LocalDateTime.parse(fechaHoraTexto);
+                            }
+
                         }
 
-                    } while (!fechaHoraValida);
+                        if (!volverAlMenu) {
+                            //avisamos antes de pedir el importe del ticket
+                            IO.println("La máquina no devuelve cambio.");
 
-                    fechaHoraInicio = LocalDateTime.parse(fechaHoraTexto);
+                            respuesta = IO.readln("Introduce el importe (mínimo " + (residente ? "0.10" : "0.25")
+                                    + "€) o V para volver al menú principal: ");
+                            volverAlMenu = respuesta.equalsIgnoreCase("V");
 
-                } else fechaHoraInicio = LocalDateTime.now();//Se usa la fecha y hora actual
+                            if (!volverAlMenu) {
+                                importe = Double.parseDouble(respuesta);
+                                if (residente) {
+                                    //Preguntar por el importe a pagar, como mínimo 0.10€
 
-                //avisamos antes de pedir el importe del ticket
-                IO.println("La máquina no devuelve cambio.");
+                                    if (importe < 0.10) IO.println("El importe mínimo es de 0.10€.");
+                                    if (importe >= 0.10) {
+                                        duracionSegundos = 900; //15 minutos
+                                        importeSuficiente = true;
+                                    }
+                                    if (importe >= 0.20) {
+                                        duracionSegundos = 1790; //29 minutos y 50 segundos
+                                    }
+                                    if (importe >= 0.40) {
+                                        duracionSegundos = 3571; //59 minutos 31 segundos
+                                    }
+                                    if (importe >= 0.60) {
+                                        duracionSegundos = 5352; //1 hora 29 minutos 12 segundos
+                                    }
+                                    if (importe >= 0.80) {
+                                        duracionSegundos = 7200; //59 minutos 31 segundos
+                                    }
 
-                if (residente) {
-                    //Preguntar por el importe a pagar, como mínimo 0.10€
-                    importe = Double.parseDouble(IO.readln("Introduce el importe (mínimo 0.10€): "));
+                                } else { //no es residente
 
-                    if (importe < 0.10) IO.println("El importe mínimo es de 0.10€.");
-                    if (importe >= 0.10) {
-                        duracionSegundos = 900; //15 minutos
-                        importeSuficiente = true;
-                    }
-                    if (importe >= 0.20) {
-                        duracionSegundos = 1790; //29 minutos y 50 segundos
-                    }
-                    if (importe >= 0.40) {
-                        duracionSegundos = 3571; //59 minutos 31 segundos
-                    }
-                    if (importe >= 0.60) {
-                        duracionSegundos = 5352; //1 hora 29 minutos 12 segundos
-                    }
-                    if (importe >= 0.80) {
-                        duracionSegundos = 7200; //59 minutos 31 segundos
-                    }
+                                    //Preguntar por el importe a pagar, como mínimo 0.25€
 
-                } else { //no es residente
+                                    if (importe < 0.25) IO.println("El importe mínimo es de 0.25€.");
+                                    if (importe >= 0.25) {
+                                        duracionSegundos = 900; //15 minutos
+                                        importeSuficiente = true;
+                                    }
+                                    if (importe >= 0.45) {
+                                        duracionSegundos = 1790; //29 minutos y 50 segundos
+                                    }
+                                    if (importe >= 0.85) {
+                                        duracionSegundos = 3571; //59 minutos 31 segundos
+                                    }
+                                    if (importe >= 1.25) {
+                                        duracionSegundos = 5352; //1 hora 29 minutos 12 segundos
+                                    }
+                                    if (importe >= 1.70) {
+                                        duracionSegundos = 7200; //2 horas
+                                    }
+                                }
+                                if (importeSuficiente) {
 
-                    //Preguntar por el importe a pagar, como mínimo 0.25€
-                    importe = Double.parseDouble(IO.readln("Introduce el importe (mínimo 0.25€): "));
+                                    //cálculo de la horaFechaFin de forma provisional
+                                    fechaHoraFin = fechaHoraInicio.plusSeconds(duracionSegundos);
 
-                    if (importe < 0.25) IO.println("El importe mínimo es de 0.25€.");
-                    if (importe >= 0.25) {
-                        duracionSegundos = 900; //15 minutos
-                        importeSuficiente = true;
-                    }
-                    if (importe >= 0.45) {
-                        duracionSegundos = 1790; //29 minutos y 50 segundos
-                    }
-                    if (importe >= 0.85) {
-                        duracionSegundos = 3571; //59 minutos 31 segundos
-                    }
-                    if (importe >= 1.25) {
-                        duracionSegundos = 5352; //1 hora 29 minutos 12 segundos
-                    }
-                    if (importe >= 1.70) {
-                        duracionSegundos = 7200; //2 horas
+                                    //extracción de la fechaHora
+                                    diaSemanaInicio = fechaHoraInicio.getDayOfWeek().getValue(); // lunes = 1, martes = 2 etc
+                                    horaInicio = fechaHoraInicio.getHour(); //de 0 a 23
+
+                                    //validación de la fecha teniendo en cuenta el horario de la zona azul
+                                    switch (diaSemanaInicio) {
+                                        case 1, 2, 3, 4, 5: //lunes a viernes 09:00 - 14:00 y 17:00 - 21:00
+
+                                            //validación de hora teniendo en cuenta el horario de la zona azul
+                                            if (horaInicio < 9) {
+                                                //se compra antes de las 09:00, mientras la zona azul está cerrada
+                                                //se empieza a contar a partir de las 09:00 y se le suma la duración de segundos establecidos por el importe
+                                                fechaHoraFin = fechaHoraInicio.withHour(9).withMinute(0).withSecond(0).withNano(0).plusSeconds(duracionSegundos);
+                                            }
+                                            if (horaInicio >= 14 && horaInicio < 17) {
+                                                //Se compra mientras la zona azul está cerrada, entre las 14:00 y las 17:00.
+                                                //se empieza a contar a partir de las 17:00 y se le suma la duración de segundos establecidos por el importe
+                                                fechaHoraFin = fechaHoraInicio.withHour(17).withMinute(0).withSecond(0).withNano(0).plusSeconds(duracionSegundos);
+                                            }
+                                            if (horaInicio >= 21) {
+                                                //se compra y su fechaHoraFin coincide con el cierre de la zona azul (21:00)
+                                                //se empieza a contar a partir de las 09:00 del día siguiente y se le suma la duración de los segundos establecidos por el importe
+                                                fechaHoraFin = fechaHoraInicio.plusDays(1).withHour(9).withMinute(0).withSecond(0).withNano(0).plusSeconds(duracionSegundos);
+                                            }
+                                            if (horaInicio >= 9 && horaInicio < 14) {
+                                                //se compra y su fechaHoraFin coincide con el cierre de la zona azul
+                                                //se le da el valor provisional a cierraZonaAzul de 14:00
+                                                cierreZonaAzul = fechaHoraInicio.withHour(14).withMinute(0).withSecond(0).withNano(0);
+
+                                                //comprobación del cierre de la zona azul
+                                                if (fechaHoraFin.isAfter(cierreZonaAzul)) {
+                                                    //la fechaHoraFin supera la hora de cierreZonaAzul
+                                                    //se calculan cuántos segundos quedan hasta el cierreZonaAzul y se guardan en segundos restantes
+                                                    segundosRestantes = ChronoUnit.SECONDS.between(cierreZonaAzul, fechaHoraFin);
+                                                    //fechaHoraFin se empieza a contar a partir de las 17:00 y se le suma los segundos restantes
+                                                    fechaHoraFin = cierreZonaAzul.withHour(17).withSecond(0).plusSeconds(segundosRestantes);
+                                                }
+                                            }
+                                            if (horaInicio >= 17 && horaInicio < 21) {
+                                                //se compra y su fechaHoraFin coincide con el cierre de la zona azul
+                                                //se le da el valor provisional a cierraZonaAzul de 21:00
+                                                cierreZonaAzul = fechaHoraInicio.withHour(21).withMinute(0).withSecond(0).withNano(0);
+
+                                                //comprobación del cierre de la zona azul
+                                                if (fechaHoraFin.isAfter(cierreZonaAzul)) {
+                                                    //la fechaHoraFin supera la hora de cierreZonaAzul
+                                                    //se calculan cuántos segundos quedan hasta el cierreZonaAzul y se guardan en segundos restantes
+                                                    segundosRestantes = ChronoUnit.SECONDS.between(cierreZonaAzul, fechaHoraFin);
+                                                    //fechaHoraFin se empieza a contar a partir de las 09:00 del día siguiente y se le suma los segundos restantes
+                                                    fechaHoraFin = cierreZonaAzul.plusDays(1).withHour(9).withSecond(0).plusSeconds(segundosRestantes);
+                                                }
+                                            }
+                                            break;
+                                        case 6: // sábado 09:00 - 14:00
+
+                                            //validación de hora teniendo en cuenta el horario de la zona azul
+                                            if (horaInicio < 9) {
+                                                //se compra antes de las 09:00
+                                                //se empieza a contar a partir de las 09:00 y se le suma la duración de segundos establecidos por el importe
+                                                fechaHoraFin = fechaHoraInicio.withHour(9).withMinute(0).withSecond(0).withNano(0).plusSeconds(duracionSegundos);
+                                            }
+                                            if (horaInicio >= 14) {
+                                                //se compra después de las 14:00, mientras la zona azul está cerrada
+                                                //se empieza a contar a partir del lunes a las 09:00 y se le suma la duración de segundos establecidos por el importe
+                                                fechaHoraFin = fechaHoraInicio.plusDays(2).withHour(9).withMinute(0).withSecond(0).withNano(0).plusSeconds(duracionSegundos);
+                                            }
+                                            if (horaInicio >= 9 && horaInicio < 14) {
+                                                //se compra entre las 09:00 y las 14:00
+                                                //se le da el valor provisional a cierraZonaAzul de 21:00
+                                                cierreZonaAzul = fechaHoraInicio.withHour(14).withMinute(0).withSecond(0).withNano(0);
+
+                                                //comprobación del cierre de la zona azul
+                                                if (fechaHoraFin.isAfter(cierreZonaAzul)) {
+                                                    //la fechaHoraFin supera la hora de cierreZonaAzul
+                                                    //se calculan cuántos segundos quedan hasta el cierreZonaAzul y se guardan en segundos restantes
+                                                    segundosRestantes = ChronoUnit.SECONDS.between(cierreZonaAzul, fechaHoraFin);
+                                                    //fechaHoraFin se empieza a contar a partir de las 09:00 del día siguiente y se le suma los segundos restantes
+                                                    fechaHoraFin = cierreZonaAzul.plusDays(2).withHour(9).withSecond(0).plusSeconds(segundosRestantes);
+                                                }
+                                            }
+                                                break;
+                                                case 7: // domingo cerrado
+                                                    //se suma 1 día (lunes), empieza a contar a partir del lunes a las 09:00
+                                                    fechaHoraFin = fechaHoraInicio.plusDays(1).withHour(9).withMinute(0).withSecond(0).withNano(0).plusSeconds(duracionSegundos);
+                                                    break;
+                                            }
+
+                                    //Se podía dar formato a las fechas con DateTimeFormatter según chat gpt y quedaría más
+                                    // limpio y optimizado el código pero como en la práctica obligatoria no lo pedía decidí
+                                    // hacer switch reforzando los conocimientos que hemos visto en clase y cumpliendo con la
+                                    //regla de oro de no usar elementos de la programación que no hayamos visto en clase.
+
+                                    //switch para formatear los días de la semana (inicio)
+                                    switch (fechaHoraInicio.getDayOfWeek().getValue()) {
+                                        case 1 -> nombreDiaInicio = "lunes";
+                                        case 2 -> nombreDiaInicio = "martes";
+                                        case 3 -> nombreDiaInicio = "miércoles";
+                                        case 4 -> nombreDiaInicio = "jueves";
+                                        case 5 -> nombreDiaInicio = "viernes";
+                                        case 6 -> nombreDiaInicio = "sábado";
+                                        case 7 -> nombreDiaInicio = "domingo";
+                                    }
+
+                                    //switch para formatear los meses (inicio)
+                                    switch (fechaHoraInicio.getMonth().getValue()){
+                                        case 1 -> nombreMesInicio = "enero";
+                                        case 2 -> nombreMesInicio = "febrero";
+                                        case 3 -> nombreMesInicio = "marzo";
+                                        case 4 -> nombreMesInicio = "abril";
+                                        case 5 -> nombreMesInicio = "mayo";
+                                        case 6 -> nombreMesInicio = "junio";
+                                        case 7 -> nombreMesInicio = "julio";
+                                        case 8 -> nombreMesInicio = "agosto";
+                                        case 9 -> nombreMesInicio = "septiembre";
+                                        case 10 -> nombreMesInicio = "octubre";
+                                        case 11 -> nombreMesInicio = "noviembre";
+                                        case 12 -> nombreMesInicio = "diciembre";
+                                    }
+
+                                    //switch para formatear los días de la semana (fin)
+                                    switch (fechaHoraFin.getDayOfWeek().getValue()) {
+                                        case 1 -> nombreDiaFin = "lunes";
+                                        case 2 -> nombreDiaFin= "martes";
+                                        case 3 -> nombreDiaFin = "miércoles";
+                                        case 4 -> nombreDiaFin = "jueves";
+                                        case 5 -> nombreDiaFin = "viernes";
+                                        case 6 -> nombreDiaFin = "sábado";
+                                        case 7 -> nombreDiaFin = "domingo";
+                                    }
+
+                                    //switch para formatear los meses (fin)
+                                    switch (fechaHoraFin.getMonth().getValue()){
+                                        case 1 -> nombreMesFin = "enero";
+                                        case 2 -> nombreMesFin = "febrero";
+                                        case 3 -> nombreMesFin = "marzo";
+                                        case 4 -> nombreMesFin = "abril";
+                                        case 5 -> nombreMesFin = "mayo";
+                                        case 6 -> nombreMesFin = "junio";
+                                        case 7 -> nombreMesFin = "julio";
+                                        case 8 -> nombreMesFin = "agosto";
+                                        case 9 -> nombreMesFin = "septiembre";
+                                        case 10 -> nombreMesFin = "octubre";
+                                        case 11 -> nombreMesFin = "noviembre";
+                                        case 12 -> nombreMesFin = "diciembre";
+                                    }
+
+
+                                    //Formateo de las horas, minutos y segundos
+                                    horaInicioFormateada = String.format("%02d:%02d",
+                                            fechaHoraInicio.getHour(),
+                                            fechaHoraInicio.getMinute());
+
+                                    horaFinFormateada = String.format("%02d:%02d",
+                                            fechaHoraFin.getHour(),
+                                            fechaHoraFin.getMinute());
+
+                                    //formateo de expedición y vencimiento
+                                    expedicion = nombreDiaInicio + " "
+                                            + fechaHoraInicio.getDayOfMonth() + " de "
+                                            + nombreMesInicio + " de "
+                                            + fechaHoraInicio.getYear() + " a las "
+                                            + horaInicioFormateada;
+
+                                    vencimiento = nombreDiaFin + " "
+                                            + fechaHoraFin.getDayOfMonth() + " de "
+                                            + nombreMesFin + " de "
+                                            + fechaHoraFin.getYear() + " a las "
+                                            + horaFinFormateada;
+
+                                    //cálculo del número de ticket
+                                    importeCentimos = (int) Math.round(importe * 100);
+                                    numeroTicket = "M"
+                                            + String.format("%04d-%02d-%02d",
+                                            fechaHoraInicio.getYear(),
+                                            fechaHoraInicio.getDayOfMonth(),
+                                            fechaHoraInicio.getMonthValue())
+                                            + "H" + horaInicioFormateada
+                                            + "I" + importeCentimos
+                                            + "C" + contadorTicket;
+                                    contadorTicket++;
+
+                                    //sumamos el importe pagado a los ingresos por tickets
+                                    ingresosTicket += importe;
+
+                                    // Muestra una animación sencilla de carga por consola.
+                                    IO.print("      Cargando ");
+                                    for (int i = 0; i < 4; i++) {
+                                        try {
+                                            Thread.sleep(500);
+                                        } catch (InterruptedException e) {
+                                            Thread.currentThread().interrupt();
+                                            break;
+                                        }
+                                        IO.print(". ");
+                                    }
+                                    IO.println("");
+
+                                    //Se imprime el ticket
+                                    IO.print("""
+                        ╔═════════════════════════════════════════════════════════╗
+                        ║                 AYUNTAMIENTO DE MARTOS                  ║
+                        ║                       ZONA AZUL                         ║
+                        ║                TICKET DE ESTACIONAMIENTO                ║
+                        ╠═════════════════════════════════════════════════════════╣
+                        """);
+                                    System.out.printf("║ %-55s ║%n", "Nº de ticket: " + numeroTicket);
+                                    System.out.printf("║ %-55s ║%n", "");
+                                    System.out.printf("║ %-55s ║%n", "Expedición:");
+                                    System.out.printf("║ %-55s ║%n", expedicion);
+                                    System.out.printf("║ %-55s ║%n", "");
+                                    System.out.printf("║ %-55s ║%n", "Fin de estacionamiento:");
+                                    System.out.printf("║ %-55s ║%n", vencimiento);
+                                    System.out.printf("║ %-55s ║%n", "");
+                                    System.out.printf("║ %-55s ║%n", "Importe pagado: " + String.format("%.2f €", importe));
+                                    IO.println("""
+                        ╠═════════════════════════════════════════════════════════╣
+                        ║              CONSERVE ESTE TICKET VISIBLE               ║
+                        ║                La máquina no da cambio.                 ║
+                        ╚═════════════════════════════════════════════════════════╝
+                        """);
+
+                                    // Pausa la ejecución hasta que el usuario pulse Enter.
+                                    IO.readln("  Pulsa para continuar... ");
+                                    IO.println("");
+
+                                    // Simula una limpieza de pantalla imprimiendo múltiples saltos de línea.
+                                    for (int i = 0; i < 100; i++) {
+                                        System.out.println();
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
-                if (importeSuficiente) {
-
-                    //cálculo de la horaFechaFin de forma provisional
-                    fechaHoraFin = fechaHoraInicio.plusSeconds(duracionSegundos);
-
-                    //extracción de la fechaHora
-                    diaSemanaInicio = fechaHoraInicio.getDayOfWeek().getValue(); // lunes = 1, martes = 2 etc
-                    horaInicio = fechaHoraInicio.getHour(); //de 0 a 23
-
-                    //validación de la fecha teniendo en cuenta el horario de la zona azul
-                    switch (diaSemanaInicio) {
-                        case 1, 2, 3, 4, 5: //lunes a viernes 09:00 - 14:00 y 17:00 - 21:00
-
-                            //validación de hora teniendo en cuenta el horario de la zona azul
-                            if (horaInicio < 9) {
-                                //se compra antes de las 09:00, mientras la zona azul está cerrada
-                                //se empieza a contar a partir de las 09:00 y se le suma la duración de segundos establecidos por el importe
-                                fechaHoraFin = fechaHoraInicio.withHour(9).withMinute(0).withSecond(0).withNano(0).plusSeconds(duracionSegundos);
-                            }
-                            if (horaInicio >= 14 && horaInicio < 17) {
-                                //Se compra mientras la zona azul está cerrada, entre las 14:00 y las 17:00.
-                                //se empieza a contar a partir de las 17:00 y se le suma la duración de segundos establecidos por el importe
-                                fechaHoraFin = fechaHoraInicio.withHour(17).withMinute(0).withSecond(0).withNano(0).plusSeconds(duracionSegundos);
-                            }
-                            if (horaInicio >= 21) {
-                                //se compra y su fechaHoraFin coincide con el cierre de la zona azul (21:00)
-                                //se empieza a contar a partir de las 09:00 del día siguiente y se le suma la duración de los segundos establecidos por el importe
-                                fechaHoraFin = fechaHoraInicio.plusDays(1).withHour(9).withMinute(0).withSecond(0).withNano(0).plusSeconds(duracionSegundos);
-                            }
-                            if (horaInicio >= 9 && horaInicio < 14) {
-                                //se compra y su fechaHoraFin coincide con el cierre de la zona azul
-                                //se le da el valor provisional a cierraZonaAzul de 14:00
-                                cierreZonaAzul = fechaHoraInicio.withHour(14).withMinute(0).withSecond(0).withNano(0);
-
-                                //comprobación del cierre de la zona azul
-                                if (fechaHoraFin.isAfter(cierreZonaAzul)) {
-                                    //la fechaHoraFin supera la hora de cierreZonaAzul
-                                    //se calculan cuántos segundos quedan hasta el cierreZonaAzul y se guardan en segundos restantes
-                                    segundosRestantes = ChronoUnit.SECONDS.between(cierreZonaAzul, fechaHoraFin);
-                                    //fechaHoraFin se empieza a contar a partir de las 17:00 y se le suma los segundos restantes
-                                    fechaHoraFin = cierreZonaAzul.withHour(17).withSecond(0).plusSeconds(segundosRestantes);
-                                }
-                            }
-                            if (horaInicio >= 17 && horaInicio < 21) {
-                                //se compra y su fechaHoraFin coincide con el cierre de la zona azul
-                                //se le da el valor provisional a cierraZonaAzul de 21:00
-                                cierreZonaAzul = fechaHoraInicio.withHour(21).withMinute(0).withSecond(0).withNano(0);
-
-                                //comprobación del cierre de la zona azul
-                                if (fechaHoraFin.isAfter(cierreZonaAzul)) {
-                                    //la fechaHoraFin supera la hora de cierreZonaAzul
-                                    //se calculan cuántos segundos quedan hasta el cierreZonaAzul y se guardan en segundos restantes
-                                    segundosRestantes = ChronoUnit.SECONDS.between(cierreZonaAzul, fechaHoraFin);
-                                    //fechaHoraFin se empieza a contar a partir de las 09:00 del día siguiente y se le suma los segundos restantes
-                                    fechaHoraFin = cierreZonaAzul.plusDays(1).withHour(9).withSecond(0).plusSeconds(segundosRestantes);
-                                }
-                            }
-                            break;
-                        case 6: // sábado 09:00 - 14:00
-
-                            //validación de hora teniendo en cuenta el horario de la zona azul
-                            if (horaInicio < 9) {
-                                //se compra antes de las 09:00
-                                //se empieza a contar a partir de las 09:00 y se le suma la duración de segundos establecidos por el importe
-                                fechaHoraFin = fechaHoraInicio.withHour(9).withMinute(0).withSecond(0).withNano(0).plusSeconds(duracionSegundos);
-                            }
-                            if (horaInicio >= 14) {
-                                //se compra después de las 14:00, mientras la zona azul está cerrada
-                                //se empieza a contar a partir del lunes a las 09:00 y se le suma la duración de segundos establecidos por el importe
-                                fechaHoraFin = fechaHoraInicio.plusDays(2).withHour(9).withMinute(0).withSecond(0).withNano(0).plusSeconds(duracionSegundos);
-                            }
-                            if (horaInicio >= 9 && horaInicio < 14) {
-                                //se compra entre las 09:00 y las 14:00
-                                //se le da el valor provisional a cierraZonaAzul de 21:00
-                                cierreZonaAzul = fechaHoraInicio.withHour(14).withMinute(0).withSecond(0).withNano(0);
-
-                                //comprobación del cierre de la zona azul
-                                if (fechaHoraFin.isAfter(cierreZonaAzul)) {
-                                    //la fechaHoraFin supera la hora de cierreZonaAzul
-                                    //se calculan cuántos segundos quedan hasta el cierreZonaAzul y se guardan en segundos restantes
-                                    segundosRestantes = ChronoUnit.SECONDS.between(cierreZonaAzul, fechaHoraFin);
-                                    //fechaHoraFin se empieza a contar a partir de las 09:00 del día siguiente y se le suma los segundos restantes
-                                    fechaHoraFin = cierreZonaAzul.plusDays(2).withHour(9).withSecond(0).plusSeconds(segundosRestantes);
-                                }
-                            }
-                                break;
-                                case 7: // domingo cerrado
-                                    //se suma 1 día (lunes), empieza a contar a partir del lunes a las 09:00
-                                    fechaHoraFin = fechaHoraInicio.plusDays(1).withHour(9).withMinute(0).withSecond(0).withNano(0).plusSeconds(duracionSegundos);
-                                    break;
-                            }
-
-                    //Se podía dar formato a las fechas con DateTimeFormatter según chat gpt y quedaría más
-                    // limpio y optimizado el código pero como en la práctica obligatoria no lo pedía decidí
-                    // hacer switch reforzando los conocimientos que hemos visto en clase y cumpliendo con la
-                    //regla de oro de no usar elementos de la programación que no hayamos visto en clase.
-
-                    //switch para formatear los días de la semana (inicio)
-                    switch (fechaHoraInicio.getDayOfWeek().getValue()) {
-                        case 1 -> nombreDiaInicio = "lunes";
-                        case 2 -> nombreDiaInicio = "martes";
-                        case 3 -> nombreDiaInicio = "miércoles";
-                        case 4 -> nombreDiaInicio = "jueves";
-                        case 5 -> nombreDiaInicio = "viernes";
-                        case 6 -> nombreDiaInicio = "sábado";
-                        case 7 -> nombreDiaInicio = "domingo";
-                    }
-
-                    //switch para formatear los meses (inicio)
-                    switch (fechaHoraInicio.getMonth().getValue()){
-                        case 1 -> nombreMesInicio = "enero";
-                        case 2 -> nombreMesInicio = "febrero";
-                        case 3 -> nombreMesInicio = "marzo";
-                        case 4 -> nombreMesInicio = "abril";
-                        case 5 -> nombreMesInicio = "mayo";
-                        case 6 -> nombreMesInicio = "junio";
-                        case 7 -> nombreMesInicio = "julio";
-                        case 8 -> nombreMesInicio = "agosto";
-                        case 9 -> nombreMesInicio = "septiembre";
-                        case 10 -> nombreMesInicio = "octubre";
-                        case 11 -> nombreMesInicio = "noviembre";
-                        case 12 -> nombreMesInicio = "diciembre";
-                    }
-
-                    //switch para formatear los días de la semana (fin)
-                    switch (fechaHoraFin.getDayOfWeek().getValue()) {
-                        case 1 -> nombreDiaFin = "lunes";
-                        case 2 -> nombreDiaFin= "martes";
-                        case 3 -> nombreDiaFin = "miércoles";
-                        case 4 -> nombreDiaFin = "jueves";
-                        case 5 -> nombreDiaFin = "viernes";
-                        case 6 -> nombreDiaFin = "sábado";
-                        case 7 -> nombreDiaFin = "domingo";
-                    }
-
-                    //switch para formatear los meses (fin)
-                    switch (fechaHoraFin.getMonth().getValue()){
-                        case 1 -> nombreMesFin = "enero";
-                        case 2 -> nombreMesFin = "febrero";
-                        case 3 -> nombreMesFin = "marzo";
-                        case 4 -> nombreMesFin = "abril";
-                        case 5 -> nombreMesFin = "mayo";
-                        case 6 -> nombreMesFin = "junio";
-                        case 7 -> nombreMesFin = "julio";
-                        case 8 -> nombreMesFin = "agosto";
-                        case 9 -> nombreMesFin = "septiembre";
-                        case 10 -> nombreMesFin = "octubre";
-                        case 11 -> nombreMesFin = "noviembre";
-                        case 12 -> nombreMesFin = "diciembre";
-                    }
 
 
-                    //Formateo de las horas, minutos y segundos
-                    horaInicioFormateada = String.format("%02d:%02d",
-                            fechaHoraInicio.getHour(),
-                            fechaHoraInicio.getMinute());
-
-                    horaFinFormateada = String.format("%02d:%02d",
-                            fechaHoraFin.getHour(),
-                            fechaHoraFin.getMinute());
-
-                    //formateo de expedición y vencimiento
-                    expedicion = nombreDiaInicio + " "
-                            + fechaHoraInicio.getDayOfMonth() + " de "
-                            + nombreMesInicio + " de "
-                            + fechaHoraInicio.getYear() + " a las "
-                            + horaInicioFormateada;
-
-                    vencimiento = nombreDiaFin + " "
-                            + fechaHoraFin.getDayOfMonth() + " de "
-                            + nombreMesFin + " de "
-                            + fechaHoraFin.getYear() + " a las "
-                            + horaFinFormateada;
-
-                    //cálculo del número de ticket
-                    importeCentimos = (int) Math.round(importe * 100);
-                    numeroTicket = "M"
-                            + String.format("%04d-%02d-%02d",
-                            fechaHoraInicio.getYear(),
-                            fechaHoraInicio.getDayOfMonth(),
-                            fechaHoraInicio.getMonthValue())
-                            + "H" + horaInicioFormateada
-                            + "I" + importeCentimos
-                            + "C" + contadorTicket;
-                    contadorTicket++;
-
-                    //sumamos el importe pagado a los ingresos por tickets
-                    ingresosTicket += importe;
-
-                    // Muestra una animación sencilla de carga por consola.
-                    IO.print("      Cargando ");
-                    for (int i = 0; i < 4; i++) {
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                            break;
-                        }
-                        IO.print(". ");
-                    }
-                    IO.println("");
-
-                    //Se imprime el ticket
-                    IO.print("""
-        ╔═════════════════════════════════════════════════════════╗
-        ║                 AYUNTAMIENTO DE MARTOS                  ║
-        ║                       ZONA AZUL                         ║
-        ║                TICKET DE ESTACIONAMIENTO                ║
-        ╠═════════════════════════════════════════════════════════╣
-        """);
-                    System.out.printf("║ %-55s ║%n", "Nº de ticket: " + numeroTicket);
-                    System.out.printf("║ %-55s ║%n", "");
-                    System.out.printf("║ %-55s ║%n", "Expedición:");
-                    System.out.printf("║ %-55s ║%n", expedicion);
-                    System.out.printf("║ %-55s ║%n", "");
-                    System.out.printf("║ %-55s ║%n", "Fin de estacionamiento:");
-                    System.out.printf("║ %-55s ║%n", vencimiento);
-                    System.out.printf("║ %-55s ║%n", "");
-                    System.out.printf("║ %-55s ║%n", "Importe pagado: " + String.format("%.2f €", importe));
-                    IO.println("""
-        ╠═════════════════════════════════════════════════════════╣
-        ║              CONSERVE ESTE TICKET VISIBLE               ║
-        ║                La máquina no da cambio.                 ║
-        ╚═════════════════════════════════════════════════════════╝
-        """);
-
-                    // Pausa la ejecución hasta que el usuario pulse Enter.
-                    IO.readln("  Pulsa para continuar... ");
-                    IO.println("");
-
-                    // Simula una limpieza de pantalla imprimiendo múltiples saltos de línea.
-                    for (int i = 0; i < 100; i++) {
-                        System.out.println();
-                    }
-                }
                 break;
             case 2:
                 // 2.Anular una multa
@@ -400,7 +419,8 @@ void main(String[] args) {
         ╚═════════════════════════════════════════════════════════╝
         """);
 
-                    opcionMulta = Integer.parseInt(IO.readln("Elige una opción: "));
+                    respuesta = IO.readln("Elige una opción: ");
+                    opcionMulta = respuesta.equalsIgnoreCase("V") ? 3 : Integer.parseInt(respuesta);
                     switch (opcionMulta){
                         case 1: // Exceder el tiempo permitido — 3,00 €
 
@@ -410,7 +430,7 @@ void main(String[] args) {
                             do {
                                 //preguntamos por el número del ticket de estacionamiento o la opción de volver
                                 numeroTicketMulta = IO.readln(
-                                        "Introduce el número del ticket o V para volver: ");
+                                        "Introduce el número del ticket o V para volver al menú principal: ");
 
                                 if (!numeroTicketMulta.equalsIgnoreCase("V")) { //si no ha escrito v
 
@@ -560,6 +580,10 @@ void main(String[] args) {
                             } while (!numeroTicketMultaValido
                                     && !numeroTicketMulta.equalsIgnoreCase("V")); //se repite mientras el número no es válido y no se haya introducido v
 
+                            if (numeroTicketMulta.equalsIgnoreCase("V")) {
+                                opcionMulta = 3;
+                            }
+
                             // Solo cobramos e imprimimos si ha superado las comprobaciones
                             if (numeroTicketMultaValido) {
 
@@ -567,130 +591,145 @@ void main(String[] args) {
                                 IO.println(
                                         "La anulación cuesta 3.00 €. La máquina no devuelve cambio.");
                                 do {
-                                    importeMulta = Double.parseDouble(
-                                            IO.readln("Introduce el importe: "));
-
-                                    if (importeMulta < 3.00) {
-                                        IO.println("El importe mínimo es de 3.00 €.");
+                                    respuesta = IO.readln("Introduce el importe o V para volver al menú principal: ");
+                                    if (!respuesta.equalsIgnoreCase("V")) {
+                                        importeMulta = Double.parseDouble(respuesta);
+                                        if (importeMulta < 3.00) {
+                                            IO.println("El importe mínimo es de 3.00 €.");
+                                        }
                                     }
-                                } while (importeMulta < 3.00);
+                                } while (!respuesta.equalsIgnoreCase("V") && importeMulta < 3.00);
 
-                                // Elegimos fecha actual o simulada para la anulación
-                                do {
-                                    respuesta = IO.readln(
-                                            "¿Quieres simular una fecha y hora de anulación? (S/N): ");
-
-                                    if (!respuesta.equalsIgnoreCase("S")
-                                            && !respuesta.equalsIgnoreCase("N")) {
-                                        IO.println("Introduce S o N.");
-                                    }
-
-                                } while (!respuesta.equalsIgnoreCase("S")
-                                        && !respuesta.equalsIgnoreCase("N"));
-
-                                simularFechaHora = respuesta.equalsIgnoreCase("S");
-
-                                if (simularFechaHora) {
+                                volverAlMenu = respuesta.equalsIgnoreCase("V");
+                                if (!volverAlMenu) {
+                                    // Elegimos fecha actual o simulada para la anulación
                                     do {
-                                        fechaHoraTexto = IO.readln(
-                                                "Introduce fecha y hora (ejemplo: 2026-11-12T10:30): ");
+                                        respuesta = IO.readln(
+                                                "¿Quieres simular una fecha y hora de anulación? (S/N o V para volver al menú principal): ");
 
-                                        fechaHoraValida = false;
-
-                                        if (fechaHoraTexto.length() == 16) {
-                                            fechaHoraValida =
-                                                    fechaHoraTexto.charAt(4) == '-'
-                                                            && fechaHoraTexto.charAt(7) == '-'
-                                                            && fechaHoraTexto.charAt(10) == 'T'
-                                                            && fechaHoraTexto.charAt(13) == ':';
+                                        if (!respuesta.equalsIgnoreCase("S")
+                                                && !respuesta.equalsIgnoreCase("N") && !respuesta.equalsIgnoreCase("V")) {
+                                            IO.println("Introduce S, N o V.");
                                         }
 
-                                        if (!fechaHoraValida) {
-                                            IO.println("Usa el formato año-mes-díaThora:minutos.");
-                                        }
+                                    } while (!respuesta.equalsIgnoreCase("S")
+                                            && !respuesta.equalsIgnoreCase("N") && !respuesta.equalsIgnoreCase("V"));
 
-                                    } while (!fechaHoraValida);
+                                    volverAlMenu = respuesta.equalsIgnoreCase("V");
+                                    simularFechaHora = respuesta.equalsIgnoreCase("S");
 
-                                    fechaHoraAnulacion = LocalDateTime.parse(fechaHoraTexto);
-
-                                } else {
                                     fechaHoraAnulacion = LocalDateTime.now();
-                                }
+                                    if (simularFechaHora) {
+                                        do {
+                                            fechaHoraTexto = IO.readln(
+                                                    "Introduce fecha y hora (ejemplo: 2026-11-12T10:30, o V para volver al menú principal): ");
 
-                                // Referencia del justificante de anulación
-                                referenciaAnulacion = "A"
-                                        + String.format("%04d-%02d-%02d",
-                                        fechaHoraAnulacion.getYear(),
-                                        fechaHoraAnulacion.getDayOfMonth(),
-                                        fechaHoraAnulacion.getMonthValue())
-                                        + "H" + String.format("%02d:%02d",
-                                        fechaHoraAnulacion.getHour(),
-                                        fechaHoraAnulacion.getMinute())
-                                        + "I" + Math.round(importeMulta * 100)//redondeamos para evitar pequeñas diferencias decimales
-                                        + "C" + (contadorAnulaciones * 2);
+                                            fechaHoraValida = false;
 
-                                contadorAnulaciones++;
+                                            if (fechaHoraTexto.length() == 16) {
+                                                fechaHoraValida =
+                                                        fechaHoraTexto.charAt(4) == '-'
+                                                                && fechaHoraTexto.charAt(7) == '-'
+                                                                && fechaHoraTexto.charAt(10) == 'T'
+                                                                && fechaHoraTexto.charAt(13) == ':';
+                                            }
 
-                                //sumamos el importe pagado a los ingresos por multas anuladas
-                                ingresosMultas += importeMulta;
+                                            if (!fechaHoraValida && !fechaHoraTexto.equalsIgnoreCase("V")) {
+                                                IO.println("Usa el formato año-mes-díaThora:minutos.");
+                                            }
 
-                                // Muestra una animación sencilla de carga por consola.
-                                IO.print("      Cargando ");
-                                for (int i = 0; i < 4; i++) {
-                                    try {
-                                        Thread.sleep(500);
-                                    } catch (InterruptedException e) {
-                                        Thread.currentThread().interrupt();
-                                        break;
+                                        } while (!fechaHoraValida && !fechaHoraTexto.equalsIgnoreCase("V"));
+
+                                        volverAlMenu = fechaHoraTexto.equalsIgnoreCase("V");
+                                        if (!volverAlMenu) {
+                                            fechaHoraAnulacion = LocalDateTime.parse(fechaHoraTexto);
+                                        }
+
                                     }
-                                    IO.print(". ");
-                                }
-                                IO.println("");
 
-                                // Imprimimos el justificante
-                                IO.print("""
-                ╔═════════════════════════════════════════════════════════╗
-                ║                 AYUNTAMIENTO DE MARTOS                  ║
-                ║                       ZONA AZUL                         ║
-                ║              JUSTIFICANTE DE ANULACIÓN                  ║
-                ╠═════════════════════════════════════════════════════════╣
-                """);
-
-                                System.out.printf("║ %-55s ║%n",
-                                        "Referencia: " + referenciaAnulacion);
-                                System.out.printf("║ %-55s ║%n", "");
-                                System.out.printf("║ %-55s ║%n", "Ticket de estacionamiento:");
-                                System.out.printf("║ %-55s ║%n", numeroTicketMulta);
-                                System.out.printf("║ %-55s ║%n", "");
-                                System.out.printf("║ %-55s ║%n",
-                                        "Motivo: exceder el tiempo permitido");
-
-                                System.out.printf("║ %-55s ║%n",
-                                        "Fecha: " + String.format("%02d/%02d/%04d a las %02d:%02d",
-                                                fechaHoraAnulacion.getDayOfMonth(),
-                                                fechaHoraAnulacion.getMonthValue(),
+                                    if (!volverAlMenu) {
+                                        // Referencia del justificante de anulación
+                                        referenciaAnulacion = "A"
+                                                + String.format("%04d-%02d-%02d",
                                                 fechaHoraAnulacion.getYear(),
+                                                fechaHoraAnulacion.getDayOfMonth(),
+                                                fechaHoraAnulacion.getMonthValue())
+                                                + "H" + String.format("%02d:%02d",
                                                 fechaHoraAnulacion.getHour(),
-                                                fechaHoraAnulacion.getMinute()));
+                                                fechaHoraAnulacion.getMinute())
+                                                + "I" + Math.round(importeMulta * 100)//redondeamos para evitar pequeñas diferencias decimales
+                                                + "C" + (contadorAnulaciones * 2);
 
-                                System.out.printf("║ %-55s ║%n",
-                                        "Importe pagado: " + String.format("%.2f €", importeMulta));
+                                        contadorAnulaciones++;
 
-                                IO.println("""
-                ╠═════════════════════════════════════════════════════════╣
-                ║                     MULTA ANULADA                       ║
-                ║               CONSERVE ESTE JUSTIFICANTE                ║
-                ╚═════════════════════════════════════════════════════════╝
-                """);
+                                        //sumamos el importe pagado a los ingresos por multas anuladas
+                                        ingresosMultas += importeMulta;
 
-                                // Pausa la ejecución hasta que el usuario pulse Enter.
-                                IO.readln("  Pulsa para continuar... ");
-                                IO.println("");
+                                        // Muestra una animación sencilla de carga por consola.
+                                        IO.print("      Cargando ");
+                                        for (int i = 0; i < 4; i++) {
+                                            try {
+                                                Thread.sleep(500);
+                                            } catch (InterruptedException e) {
+                                                Thread.currentThread().interrupt();
+                                                break;
+                                            }
+                                            IO.print(". ");
+                                        }
+                                        IO.println("");
 
-                                // Simula una limpieza de pantalla imprimiendo múltiples saltos de línea.
-                                for (int i = 0; i < 100; i++) {
-                                    System.out.println();
+                                        // Imprimimos el justificante
+                                        IO.print("""
+                        ╔═════════════════════════════════════════════════════════╗
+                        ║                 AYUNTAMIENTO DE MARTOS                  ║
+                        ║                       ZONA AZUL                         ║
+                        ║              JUSTIFICANTE DE ANULACIÓN                  ║
+                        ╠═════════════════════════════════════════════════════════╣
+                        """);
+
+                                        System.out.printf("║ %-55s ║%n",
+                                                "Referencia: " + referenciaAnulacion);
+                                        System.out.printf("║ %-55s ║%n", "");
+                                        System.out.printf("║ %-55s ║%n", "Ticket de estacionamiento:");
+                                        System.out.printf("║ %-55s ║%n", numeroTicketMulta);
+                                        System.out.printf("║ %-55s ║%n", "");
+                                        System.out.printf("║ %-55s ║%n",
+                                                "Motivo: exceder el tiempo permitido");
+
+                                        System.out.printf("║ %-55s ║%n",
+                                                "Fecha: " + String.format("%02d/%02d/%04d a las %02d:%02d",
+                                                        fechaHoraAnulacion.getDayOfMonth(),
+                                                        fechaHoraAnulacion.getMonthValue(),
+                                                        fechaHoraAnulacion.getYear(),
+                                                        fechaHoraAnulacion.getHour(),
+                                                        fechaHoraAnulacion.getMinute()));
+
+                                        System.out.printf("║ %-55s ║%n",
+                                                "Importe pagado: " + String.format("%.2f €", importeMulta));
+
+                                        IO.println("""
+                        ╠═════════════════════════════════════════════════════════╣
+                        ║                     MULTA ANULADA                       ║
+                        ║               CONSERVE ESTE JUSTIFICANTE                ║
+                        ╚═════════════════════════════════════════════════════════╝
+                        """);
+
+                                        // Pausa la ejecución hasta que el usuario pulse Enter.
+                                        IO.readln("  Pulsa para continuar... ");
+                                        IO.println("");
+
+                                        // Simula una limpieza de pantalla imprimiendo múltiples saltos de línea.
+                                        for (int i = 0; i < 100; i++) {
+                                            System.out.println();
+                                        }
+                                    }
                                 }
+
+
+                                if (volverAlMenu) {
+                                    opcionMulta = 3;
+                                }
+
                             }
 
                             break;
@@ -704,7 +743,7 @@ void main(String[] args) {
                             //pedimos el importe hasta que sea suficiente
                             //también permitimos escribir V para volver sin anular
                             do {
-                                respuesta = IO.readln("Introduce el importe o V para volver: ");
+                                respuesta = IO.readln("Introduce el importe o V para volver al menú principal: ");
 
                                 if (!respuesta.equalsIgnoreCase("V")) {
                                     importeMulta = Double.parseDouble(respuesta);
@@ -717,28 +756,34 @@ void main(String[] args) {
 
                             } while (!importeSuficiente && !respuesta.equalsIgnoreCase("V"));
 
+                            if (respuesta.equalsIgnoreCase("V")) {
+                                opcionMulta = 3;
+                            }
+
                             //solo continuamos con la anulación si el importe es suficiente
                             if (importeSuficiente) {
 
                                 // Elegimos fecha actual o simulada para la anulación
                                 do {
                                     respuesta = IO.readln(
-                                            "¿Quieres simular una fecha y hora de anulación? (S/N): ");
+                                            "¿Quieres simular una fecha y hora de anulación? (S/N o V para volver al menú principal): ");
 
                                     if (!respuesta.equalsIgnoreCase("S")
-                                            && !respuesta.equalsIgnoreCase("N")) {
-                                        IO.println("Introduce S o N.");
+                                            && !respuesta.equalsIgnoreCase("N") && !respuesta.equalsIgnoreCase("V")) {
+                                        IO.println("Introduce S, N o V.");
                                     }
 
                                 } while (!respuesta.equalsIgnoreCase("S")
-                                        && !respuesta.equalsIgnoreCase("N"));
+                                        && !respuesta.equalsIgnoreCase("N") && !respuesta.equalsIgnoreCase("V"));
 
+                                volverAlMenu = respuesta.equalsIgnoreCase("V");
                                 simularFechaHora = respuesta.equalsIgnoreCase("S");
 
+                                fechaHoraAnulacion = LocalDateTime.now();
                                 if (simularFechaHora) {
                                     do {
                                         fechaHoraTexto = IO.readln(
-                                                "Introduce fecha y hora (ejemplo: 2026-11-12T10:30): ");
+                                                "Introduce fecha y hora (ejemplo: 2026-11-12T10:30, o V para volver al menú principal): ");
 
                                         fechaHoraValida = false;
 
@@ -750,90 +795,99 @@ void main(String[] args) {
                                                             && fechaHoraTexto.charAt(13) == ':';
                                         }
 
-                                        if (!fechaHoraValida) {
+                                        if (!fechaHoraValida && !fechaHoraTexto.equalsIgnoreCase("V")) {
                                             IO.println("Usa el formato año-mes-díaThora:minutos.");
                                         }
 
-                                    } while (!fechaHoraValida);
+                                    } while (!fechaHoraValida && !fechaHoraTexto.equalsIgnoreCase("V"));
 
-                                    fechaHoraAnulacion = LocalDateTime.parse(fechaHoraTexto);
-
-                                } else {
-                                    fechaHoraAnulacion = LocalDateTime.now();
-                                }
-
-                                //Creamos el número de referencia del justificante de anulación
-                                referenciaAnulacion = "A"
-                                        + String.format("%04d-%02d-%02d",
-                                        fechaHoraAnulacion.getYear(),
-                                        fechaHoraAnulacion.getDayOfMonth(),
-                                        fechaHoraAnulacion.getMonthValue())
-                                        + "H" + String.format("%02d:%02d",
-                                        fechaHoraAnulacion.getHour(),
-                                        fechaHoraAnulacion.getMinute())
-                                        + "I" + Math.round(importeMulta * 100) //redondeamos para evitar pequeñas diferencias decimales
-                                        + "C" + (contadorAnulaciones * 2);
-
-                                contadorAnulaciones++;
-
-                                //sumamos el importe pagado a los ingresos por multas anuladas
-                                ingresosMultas += importeMulta;
-
-                                // Muestra una animación sencilla de carga por consola.
-                                IO.print("      Cargando ");
-                                for (int i = 0; i < 4; i++) {
-                                    try {
-                                        Thread.sleep(500);
-                                    } catch (InterruptedException e) {
-                                        Thread.currentThread().interrupt();
-                                        break;
+                                    volverAlMenu = fechaHoraTexto.equalsIgnoreCase("V");
+                                    if (!volverAlMenu) {
+                                        fechaHoraAnulacion = LocalDateTime.parse(fechaHoraTexto);
                                     }
-                                    IO.print(". ");
+
                                 }
-                                IO.println("");
 
-                                // Imprimimos el justificante
-                                IO.print("""
-                ╔═════════════════════════════════════════════════════════╗
-                ║                 AYUNTAMIENTO DE MARTOS                  ║
-                ║                       ZONA AZUL                         ║
-                ║              JUSTIFICANTE DE ANULACIÓN                  ║
-                ╠═════════════════════════════════════════════════════════╣
-                """);
+                                if (!volverAlMenu) {
+                                    //Creamos el número de referencia del justificante de anulación
+                                    referenciaAnulacion = "A"
+                                            + String.format("%04d-%02d-%02d",
+                                            fechaHoraAnulacion.getYear(),
+                                            fechaHoraAnulacion.getDayOfMonth(),
+                                            fechaHoraAnulacion.getMonthValue())
+                                            + "H" + String.format("%02d:%02d",
+                                            fechaHoraAnulacion.getHour(),
+                                            fechaHoraAnulacion.getMinute())
+                                            + "I" + Math.round(importeMulta * 100) //redondeamos para evitar pequeñas diferencias decimales
+                                            + "C" + (contadorAnulaciones * 2);
 
-                                System.out.printf("║ %-55s ║%n",
-                                        "Referencia: " + referenciaAnulacion);
-                                System.out.printf("║ %-55s ║%n", "");
-                                System.out.printf("║ %-55s ║%n",
-                                        "Motivo: carecer de ticket");
-                                System.out.printf("║ %-55s ║%n", "");
+                                    contadorAnulaciones++;
 
-                                System.out.printf("║ %-55s ║%n",
-                                        "Fecha: " + String.format("%02d/%02d/%04d a las %02d:%02d",
-                                                fechaHoraAnulacion.getDayOfMonth(),
-                                                fechaHoraAnulacion.getMonthValue(),
-                                                fechaHoraAnulacion.getYear(),
-                                                fechaHoraAnulacion.getHour(),
-                                                fechaHoraAnulacion.getMinute()));
+                                    //sumamos el importe pagado a los ingresos por multas anuladas
+                                    ingresosMultas += importeMulta;
 
-                                System.out.printf("║ %-55s ║%n",
-                                        "Importe pagado: " + String.format("%.2f €", importeMulta));
+                                    // Muestra una animación sencilla de carga por consola.
+                                    IO.print("      Cargando ");
+                                    for (int i = 0; i < 4; i++) {
+                                        try {
+                                            Thread.sleep(500);
+                                        } catch (InterruptedException e) {
+                                            Thread.currentThread().interrupt();
+                                            break;
+                                        }
+                                        IO.print(". ");
+                                    }
+                                    IO.println("");
 
-                                IO.println("""
-                ╠═════════════════════════════════════════════════════════╣
-                ║                     MULTA ANULADA                       ║
-                ║               CONSERVE ESTE JUSTIFICANTE                ║
-                ╚═════════════════════════════════════════════════════════╝
-                """);
+                                    // Imprimimos el justificante
+                                    IO.print("""
+                    ╔═════════════════════════════════════════════════════════╗
+                    ║                 AYUNTAMIENTO DE MARTOS                  ║
+                    ║                       ZONA AZUL                         ║
+                    ║              JUSTIFICANTE DE ANULACIÓN                  ║
+                    ╠═════════════════════════════════════════════════════════╣
+                    """);
 
-                                // Pausa la ejecución hasta que el usuario pulse Enter.
-                                IO.readln("  Pulsa para continuar... ");
-                                IO.println("");
+                                    System.out.printf("║ %-55s ║%n",
+                                            "Referencia: " + referenciaAnulacion);
+                                    System.out.printf("║ %-55s ║%n", "");
+                                    System.out.printf("║ %-55s ║%n",
+                                            "Motivo: carecer de ticket");
+                                    System.out.printf("║ %-55s ║%n", "");
 
-                                // Simula una limpieza de pantalla imprimiendo múltiples saltos de línea.
-                                for (int i = 0; i < 100; i++) {
-                                    System.out.println();
+                                    System.out.printf("║ %-55s ║%n",
+                                            "Fecha: " + String.format("%02d/%02d/%04d a las %02d:%02d",
+                                                    fechaHoraAnulacion.getDayOfMonth(),
+                                                    fechaHoraAnulacion.getMonthValue(),
+                                                    fechaHoraAnulacion.getYear(),
+                                                    fechaHoraAnulacion.getHour(),
+                                                    fechaHoraAnulacion.getMinute()));
+
+                                    System.out.printf("║ %-55s ║%n",
+                                            "Importe pagado: " + String.format("%.2f €", importeMulta));
+
+                                    IO.println("""
+                    ╠═════════════════════════════════════════════════════════╣
+                    ║                     MULTA ANULADA                       ║
+                    ║               CONSERVE ESTE JUSTIFICANTE                ║
+                    ╚═════════════════════════════════════════════════════════╝
+                    """);
+
+                                    // Pausa la ejecución hasta que el usuario pulse Enter.
+                                    IO.readln("  Pulsa para continuar... ");
+                                    IO.println("");
+
+                                    // Simula una limpieza de pantalla imprimiendo múltiples saltos de línea.
+                                    for (int i = 0; i < 100; i++) {
+                                        System.out.println();
+                                    }
                                 }
+
+
+                                if (volverAlMenu) {
+                                    opcionMulta = 3;
+                                }
+
                             }
 
                             break;
@@ -861,7 +915,8 @@ void main(String[] args) {
         ║   4. Volver al menú principal.                          ║
         ╚═════════════════════════════════════════════════════════╝
         """);
-                    opcionInformacion = Integer.parseInt(IO.readln("Elige una opción de consulta: "));
+                    respuesta = IO.readln("Elige una opción: ");
+                    opcionInformacion = respuesta.equalsIgnoreCase("V") ? 4 : Integer.parseInt(respuesta);
 
                     switch (opcionInformacion){
                         case 1: //fecha y hora actual en formato español
@@ -926,30 +981,9 @@ void main(String[] args) {
         ╚═════════════════════════════════════════════════════════╝
         """);
 
-                            // Pausa la ejecución hasta que el usuario pulse Enter.
-                            IO.readln("  Pulsa para continuar... ");
-                            IO.println("");
-
-                            // Simula una limpieza de pantalla imprimiendo múltiples saltos de línea.
-                            for (int i = 0; i < 100; i++) {
-                                System.out.println();
-                            }
                             break;
 
                         case 2: //tarifa del parquímetro
-                            // Muestra una animación sencilla de carga por consola.
-                            IO.print("      Cargando ");
-                            for (int i = 0; i < 4; i++) {
-                                try {
-                                    Thread.sleep(500);
-                                } catch (InterruptedException e) {
-                                    Thread.currentThread().interrupt();
-                                    break;
-                                }
-                                IO.print(". ");
-                            }
-                            IO.println("");
-
                             //mostramos las tarifas de residentes y no residentes
                             IO.println("""
         ╔═════════════════════════════════════════════════════════╗
@@ -966,30 +1000,9 @@ void main(String[] args) {
         ╚═════════════════════════════════════════════════════════╝
         """);
 
-                            // Pausa la ejecución hasta que el usuario pulse Enter.
-                            IO.readln("  Pulsa para continuar... ");
-                            IO.println("");
-
-                            // Simula una limpieza de pantalla imprimiendo múltiples saltos de línea.
-                            for (int i = 0; i < 100; i++) {
-                                System.out.println();
-                            }
                             break;
 
                         case 3://horario de la zona azul
-                            // Muestra una animación sencilla de carga por consola.
-                            IO.print("      Cargando ");
-                            for (int i = 0; i < 4; i++) {
-                                try {
-                                    Thread.sleep(500);
-                                } catch (InterruptedException e) {
-                                    Thread.currentThread().interrupt();
-                                    break;
-                                }
-                                IO.print(". ");
-                            }
-                            IO.println("");
-
                             //mostramos los horarios de funcionamiento de la zona azul
                             IO.println("""
         ╔═════════════════════════════════════════════════════════╗
@@ -1003,14 +1016,6 @@ void main(String[] args) {
         ╚═════════════════════════════════════════════════════════╝
         """);
 
-                            // Pausa la ejecución hasta que el usuario pulse Enter.
-                            IO.readln("  Pulsa para continuar... ");
-                            IO.println("");
-
-                            // Simula una limpieza de pantalla imprimiendo múltiples saltos de línea.
-                            for (int i = 0; i < 100; i++) {
-                                System.out.println();
-                            }
                             break;
                         case 4: //volver al menú principal
                             break;
@@ -1023,12 +1028,15 @@ void main(String[] args) {
                 break;
             case 4: //Menú de administrador
                 //pedimos las credenciales del administrador
-                usuarioAdmin = IO.readln("Introduce el usuario: ");
-                contraseniaAdmin = IO.readln("Introduce la contraseña: ");
+                usuarioAdmin = IO.readln("Introduce el usuario o V para volver al menú principal: ");
+                contraseniaAdmin = "";
+                if (!usuarioAdmin.equalsIgnoreCase("V")) {
+                    contraseniaAdmin = IO.readln("Introduce la contraseña o V para volver al menú principal: ");
+                }
 
                 //comprobamos que el usuario y la contraseña sean correctos
                 if (usuarioAdmin.equals("admin") && contraseniaAdmin.equals("1234")) {
-                    IO.println("Acceso concedido.");
+                    IO.println("\n          · Bienvenid@ " + usuarioAdmin);
                     do {
 
                         //imprimimos el submenú de administrador
@@ -1043,7 +1051,8 @@ void main(String[] args) {
         ║   4. Volver al menú principal.                          ║
         ╚═════════════════════════════════════════════════════════╝
         """);
-                        opcionAdmin = Integer.parseInt(IO.readln("Elige una opción: "));
+                        respuesta = IO.readln("Elige una opción: ");
+                        opcionAdmin = respuesta.equalsIgnoreCase("V") ? 4 : Integer.parseInt(respuesta);
 
                         switch (opcionAdmin) {
                             case 1: //consultar ingresos y número de tickets
@@ -1082,11 +1091,6 @@ void main(String[] args) {
                                 // Pausa la ejecución hasta que el usuario pulse Enter.
                                 IO.readln("  Pulsa para continuar... ");
                                 IO.println("");
-
-                                // Simula una limpieza de pantalla imprimiendo múltiples saltos de línea.
-                                for (int i = 0; i < 100; i++) {
-                                    System.out.println();
-                                }
                                 break;
                             case 2: //consultar ingresos y número de multas anuladas
 
@@ -1125,11 +1129,6 @@ void main(String[] args) {
                                 // Pausa la ejecución hasta que el usuario pulse Enter.
                                 IO.readln("  Pulsa para continuar... ");
                                 IO.println("");
-
-                                // Simula una limpieza de pantalla imprimiendo múltiples saltos de línea.
-                                for (int i = 0; i < 100; i++) {
-                                    System.out.println();
-                                }
                                 break;
                             case 3: //apagar el parquímetro
                                 parquimetroEncendido = false;
@@ -1142,7 +1141,7 @@ void main(String[] args) {
                         }
 
                     } while (parquimetroEncendido && opcionAdmin != 4);
-                } else {
+                } else if (!usuarioAdmin.equalsIgnoreCase("V") && !contraseniaAdmin.equalsIgnoreCase("V")) {
                     IO.println("Usuario o contraseña incorrectos.");
                 }
                 break;
