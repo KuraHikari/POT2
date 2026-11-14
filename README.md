@@ -4,11 +4,19 @@ Manual de usuario de la práctica de Programación (UD02) de 1.º DAM. El progra
 
 ## Índice
 
+- [Requisitos](#requisitos)
 - [Abrir el programa en Windows](#abrir-el-programa-en-windows)
+- [Ejecutar en macOS o Linux](#ejecutar-en-macos-o-linux)
 - [Menú principal](#menú-principal)
 - [Obtener un ticket](#obtener-un-ticket)
 - [Anular una multa](#anular-una-multa)
 - [Tarifas y horarios](#tarifas-y-horarios)
+- [Limitaciones](#limitaciones)
+
+## Requisitos
+
+- **Java 25 (JDK 25)**, con el comando `java` disponible en la terminal. Comprueba la versión con `java --version`.
+- Una terminal interactiva y los archivos del repositorio. No se necesitan bibliotecas externas, Maven ni Gradle.
 
 ## Abrir el programa en Windows
 
@@ -20,6 +28,16 @@ Para abrir el parquímetro necesitas tener **Java 25 (JDK 25)** instalado.
 4. Haz clic en la barra de dirección del Explorador, escribe `cmd` y pulsa **Intro**.
 5. En la ventana que se abre, escribe `java src/Main.java` y pulsa **Intro**. Aparecerá el menú del parquímetro.
 
+## Ejecutar en macOS o Linux
+
+Descarga y extrae el ZIP del repositorio, abre una terminal en la carpeta que contiene `README.md` y `src`, y ejecuta:
+
+```sh
+java src/Main.java
+```
+
+El mismo comando se usa en Windows. Java compila y ejecuta el fuente directamente; no necesitas abrir un IDE ni usar el archivo `.class` incluido en `out`.
+
 ## Menú principal
 
 Escribe el número de la opción y pulsa **Intro**.
@@ -27,9 +45,11 @@ Escribe el número de la opción y pulsa **Intro**.
 | Opción | Qué puedes hacer |
 | --- | --- |
 | `1` | Comprar un ticket y ver la hora hasta la que puedes aparcar. |
-| `2` | Abrir el menú de multas y simular el pago de 3,00 € por exceder el tiempo. |
+| `2` | Anular multas por exceder el tiempo (3,00 €) o por carecer de ticket (6,00 €). |
+| `3` | Consultar la fecha y hora actuales, las tarifas y los horarios. |
+| `4` | Acceder al menú de administrador para consultar los ingresos y los totales de tickets y multas, o apagar el parquímetro. |
 
-Para salir, escribe `5` en el menú principal.
+Para apagar el parquímetro, accede al menú de administrador y elige la opción `3`.
 
 ## Obtener un ticket
 
@@ -37,7 +57,10 @@ Para salir, escribe `5` en el menú principal.
 2. Responde `S` si eres residente o `N` si no lo eres.
 3. Para usar la fecha y hora actuales, responde `N` a la pregunta sobre la simulación. Para probar otro momento, responde `S` y escribe la fecha como `AAAA-MM-DDTHH:MM`, con una `T` entre la fecha y la hora.
 4. Introduce el importe con un **punto** para los decimales, por ejemplo `0.25`. El mínimo es de **0,10 €** para residentes y de **0,25 €** para no residentes. La máquina no devuelve cambio.
+   Si pagas menos del mínimo, no se emite un ticket y vuelves al menú principal.
 5. Lee el ticket en pantalla. Verás su número, la fecha y hora de expedición, el fin del estacionamiento y el importe pagado.
+
+El número de ticket utiliza el formato `M<AAAA-DD-MM>H<HH:MM>I<céntimos>C<contador>`: la fecha del número va en orden año-día-mes, a diferencia de la fecha de simulación. El contador empieza en `1` cada vez que abres el programa y aumenta por cada ticket emitido.
 
 ### Ejemplo de compra
 
@@ -49,8 +72,11 @@ El ticket vence el jueves 12 de noviembre a las **17:05**. De los 15 minutos com
 
 En el menú principal, elige **2. Anular una multa**.
 
-- **1. Exceder el tiempo permitido (3,00 €).** Introduce el número completo del ticket que figura en pantalla y escribe `3.00` para simular el pago. Si el importe es inferior, el programa vuelve a pedirlo. Después del pago, volverás al submenú.
+- **1. Exceder el tiempo permitido (3,00 €).** Introduce el número completo del ticket que figura en pantalla y escribe `3.00` para simular el pago. Si el importe es inferior, el programa vuelve a pedirlo. Después del pago, elige la fecha actual o simulada y lee el justificante.
+- **2. Carecer de ticket (6,00 €).** Introduce el importe, elige la fecha actual o simulada y lee el justificante. En el paso del pago puedes escribir `V` para volver.
 - **3. Volver al menú principal.**
+
+La opción de 3,00 € comprueba el formato del número de ticket, su fecha y hora, un importe de al menos 10 céntimos y un contador positivo. No consulta un registro de tickets emitidos, no comprueba que haya vencido ni impide reutilizar el número. El pago se simula por teclado.
 
 ## Tarifas y horarios
 
@@ -62,6 +88,8 @@ En el menú principal, elige **2. Anular una multa**.
 | 01:29:12 | 1,25 € | 0,60 € |
 | 02:00:00 | 1,70 € | 0,80 € |
 
+Los importes son **umbrales**: se aplica el mayor tramo cuyo precio no supera lo pagado, con un máximo de **2 horas**, aunque pagues más. Por ejemplo, `0.30` para un no residente da 15 minutos. El exceso no se devuelve ni añade tiempo proporcional.
+
 | Día | Horario de la zona azul |
 | --- | --- |
 | Lunes a viernes | 09:00–14:00 y 17:00–21:00 |
@@ -69,3 +97,10 @@ En el menú principal, elige **2. Anular una multa**.
 | Domingos | Cerrado |
 
 El tiempo comprado se consume durante los tramos de apertura.
+
+## Limitaciones
+
+- No hay persistencia de tickets, multas ni ingresos entre ejecuciones.
+- Manejo completo de entradas incorrectas: letras en opciones numéricas, importes mal escritos, fechas inexistentes u horas fuera de rango pueden cerrar el programa con un error. La simulación comprueba la forma del texto antes de convertirlo, pero no captura los errores de conversión.
+
+El código está en `src/Main.java`; también se incluyen configuración de IntelliJ IDEA y un archivo compilado en `out/production/POT2`.
