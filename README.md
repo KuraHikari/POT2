@@ -10,7 +10,10 @@ Manual de usuario de la práctica de Programación (UD02) de 1.º DAM. El progra
 - [Menú principal](#menú-principal)
 - [Obtener un ticket](#obtener-un-ticket)
 - [Anular una multa](#anular-una-multa)
+- [Consultar fecha y hora, tarifas y horarios](#consultar-fecha-y-hora-tarifas-y-horarios)
 - [Tarifas y horarios](#tarifas-y-horarios)
+- [Menú de administrador](#menú-de-administrador)
+- [Prueba completa](#prueba-completa)
 - [Limitaciones](#limitaciones)
 
 ## Requisitos
@@ -24,7 +27,7 @@ Para abrir el parquímetro necesitas tener **Java 25 (JDK 25)** instalado.
 
 1. En GitHub, pulsa el botón verde **Code** y elige **Download ZIP**.
 2. Abre **Descargas**, haz clic derecho sobre el ZIP y selecciona **Extraer todo**.
-3. Abre la carpeta extraída y haz doble clic en **POT2.bat**. Se abrirá el menú del parquímetro.
+3. Abre la carpeta extraída y haz doble clic en [**POT2.bat**](POT2.bat). Se abrirá el menú del parquímetro.
 
 ## Ejecutar en macOS o Linux
 
@@ -70,11 +73,15 @@ El ticket vence el jueves 12 de noviembre a las **17:05**. De los 15 minutos com
 
 En el menú principal, elige **2. Anular una multa**.
 
-- **1. Exceder el tiempo permitido (3,00 €).** Introduce el número completo del ticket que figura en pantalla y escribe `3.00` para simular el pago. Si el importe es inferior, el programa vuelve a pedirlo. Después del pago, elige la fecha actual o simulada y lee el justificante.
+- **1. Exceder el tiempo permitido (3,00 €).** Introduce el número completo del ticket o escribe `V` para volver. Escribe `3.00` para simular el pago. Si el importe es inferior, el programa vuelve a pedirlo. Después del pago, elige la fecha actual o simulada y lee el justificante.
 - **2. Carecer de ticket (6,00 €).** Introduce el importe, elige la fecha actual o simulada y lee el justificante. En el paso del pago puedes escribir `V` para volver.
 - **3. Volver al menú principal.**
 
 La opción de 3,00 € comprueba el formato del número de ticket, su fecha y hora, un importe de al menos 10 céntimos y un contador positivo. No consulta un registro de tickets emitidos, no comprueba que haya vencido ni impide reutilizar el número. El pago se simula por teclado.
+
+## Consultar fecha y hora, tarifas y horarios
+
+Desde el menú principal, elige **3**. Usa **1** para ver la fecha y hora actuales del equipo, **2** para ver las tarifas y **3** para ver los horarios. Pulsa **Intro** tras leer cada pantalla. La opción **4** vuelve al menú principal.
 
 ## Tarifas y horarios
 
@@ -95,6 +102,28 @@ Los importes son **umbrales**: se aplica el mayor tramo cuyo precio no supera lo
 | Domingos | Cerrado |
 
 El tiempo comprado se consume durante los tramos de apertura.
+
+## Menú de administrador
+
+Elige **4** en el menú principal e introduce el usuario de prueba `admin` y la contraseña `1234`.
+
+| Opción | Qué puedes hacer |
+| --- | --- |
+| `1` | Consultar cuántos tickets se han emitido y cuánto se ha recaudado por ellos. |
+| `2` | Consultar cuántas multas se han anulado y cuánto se ha recaudado por ellas. |
+| `3` | Apagar el parquímetro y terminar la ejecución. |
+| `4` | Volver al menú principal. |
+
+## Prueba completa
+
+Haz toda la prueba en una sola ejecución para comprobar los contadores. Cuando aparezca «Pulsa para continuar», pulsa **Intro**.
+
+1. Compra el ticket de no residente del [ejemplo de compra](#ejemplo-de-compra). Comprueba que vence a las **17:05** y guarda el número.
+2. Compra un ticket de residente. Simula `2026-11-12T10:00` y paga `0.10`. Debe vencer a las **10:15**.
+3. En el menú de multas, elige **1**, introduce el número del primer ticket y paga `3.00`. Simula la fecha de anulación `2026-11-12T17:10`. Comprueba el motivo y el número de ticket en el justificante.
+4. En el mismo submenú, elige **2** y paga `6.00`. Simula `2026-11-12T17:15` y comprueba el justificante. Elige **3** para volver al menú principal.
+5. En **Consultas**, abre las opciones **1**, **2** y **3**. Vuelve al menú principal con **4**.
+6. En **Administrador**, comprueba que hay **2 tickets y 0,35 €** de ingresos por tickets, y **2 multas anuladas y 9,00 €** de ingresos por multas. Elige **3** para apagar el parquímetro.
 
 ## Limitaciones
 
